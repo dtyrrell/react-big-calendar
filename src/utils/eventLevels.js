@@ -66,6 +66,7 @@ export function eventLevels(rowSegments, limit = Infinity) {
 }
 
 export function inRange(e, start, end, { startAccessor, endAccessor }) {
+
   let eStart = dates.startOf(get(e, startAccessor), 'day')
   let eEnd = get(e, endAccessor)
 

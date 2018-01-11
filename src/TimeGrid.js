@@ -26,6 +26,7 @@ export default class TimeGrid extends Component {
   static propTypes = {
     events: PropTypes.array.isRequired,
     resources: PropTypes.array,
+    staff: PropTypes.array,
 
     step: PropTypes.number,
     range: PropTypes.arrayOf(PropTypes.instanceOf(Date)),
@@ -151,6 +152,7 @@ export default class TimeGrid extends Component {
       resources,
       allDayAccessor,
       showMultiDayTimes,
+      staff,
     } = this.props
 
     width = width || this.state.gutterWidth
@@ -162,12 +164,15 @@ export default class TimeGrid extends Component {
 
     let allDayEvents = [],
       rangeEvents = []
-
+      console.log("events");
+      console.log(events);
     events.forEach(event => {
       if (inRange(event, start, end, this.props)) {
         let eStart = get(event, startAccessor),
           eEnd = get(event, endAccessor)
 
+          console.log(eStart);
+          console.log(eEnd);
         if (
           get(event, allDayAccessor) ||
           (dates.isJustDate(eStart) && dates.isJustDate(eEnd)) ||
@@ -180,6 +185,8 @@ export default class TimeGrid extends Component {
       }
     })
 
+    console.log(rangeEvents);
+
     allDayEvents.sort((a, b) => sortEvents(a, b, this.props))
 
     let gutterRef = ref => (this._gutters[1] = ref && findDOMNode(ref))
@@ -188,12 +195,13 @@ export default class TimeGrid extends Component {
       range,
       rangeEvents,
       this.props.now,
-      resources || [null]
+      resources || [null],
+      staff || null
     )
 
     return (
       <div className="rbc-time-view">
-        {this.renderHeader(range, allDayEvents, width, resources)}
+        {this.renderHeader(range, allDayEvents, width, resources, staff)}
 
         <div ref="content" className="rbc-time-content">
           <div ref="timeIndicator" className="rbc-current-time-indicator" />
@@ -210,7 +218,67 @@ export default class TimeGrid extends Component {
       </div>
     )
   }
-  renderEvents(range, events, today, resources) {
+  renderEvents(range, events, today, resources, staff) {
+    console.log(staff);
+      if(staff) {
+        return this.renderEventsForStaff(range, events, today, resources, staff);
+      }
+      else {
+        return this.renderEventsForRange(range, events, today, resources);
+      }
+  }
+
+  renderEventsForStaff(range, events, today, resources, staff) {
+    let {
+      min,
+      max,
+      endAccessor,
+      startAccessor,
+      resourceAccessor,
+      resourceIdAccessor,
+      components,
+    } = this.props
+
+    return staff.map((person, idx) => {
+
+      // schedule view can only see one date.
+      var date = range[0];
+
+      let daysEvents = events.filter(event =>
+        dates.inRange(
+          date,
+          get(event, startAccessor),
+          get(event, endAccessor),
+          'day'
+        )
+      )
+      return resources.map((resource, id) => {
+        let eventsToDisplay = daysEvents.filter(
+              event =>
+                event.StaffId ===  person.Id
+            )
+
+        return (
+          <DayColumn
+            {...this.props}
+            min={dates.merge(date, min)}
+            max={dates.merge(date, max)}
+            resource={resource && resource.id}
+            eventComponent={components.event}
+            eventWrapperComponent={components.eventWrapper}
+            dayWrapperComponent={components.dayWrapper}
+            className={cn({ 'rbc-now': dates.eq(date, today, 'day') })}
+            style={segStyle(1, this.slots)}
+            key={idx + '-' + id}
+            date={date}
+            events={eventsToDisplay}
+          />
+        )
+      })
+    })
+  }
+
+  renderEventsForRange(range, events, today, resources) {
     let {
       min,
       max,
@@ -230,7 +298,6 @@ export default class TimeGrid extends Component {
           'day'
         )
       )
-
       return resources.map((resource, id) => {
         let eventsToDisplay = !resource
           ? daysEvents
@@ -260,7 +327,7 @@ export default class TimeGrid extends Component {
     })
   }
 
-  renderHeader(range, events, width, resources) {
+  renderHeader(range, events, width, resources, staff) {
     let { messages, rtl, selectable, components, now } = this.props
     let { isOverflowing } = this.state || {}
 
@@ -280,7 +347,9 @@ export default class TimeGrid extends Component {
       >
         <div className="rbc-row">
           <div className="rbc-label rbc-header-gutter" style={{ width }} />
-          {this.renderHeaderCells(range)}
+          {/*{if staff ? this.renderScheduleHeaderCells(staff) : {this.renderHeaderCells(range)} }*/}
+
+          {staff ?  this.renderScheduleHeaderCells(staff): null }
         </div>
         {resources && (
           <div className="rbc-row rbc-row-resource">
@@ -338,6 +407,61 @@ export default class TimeGrid extends Component {
           </div>
         )
       })
+    })
+  }
+
+  renderScheduleHeaderCells(staff) {
+    let {
+      dayFormat,
+      culture,
+      components,
+      dayPropGetter,
+      getDrilldownView,
+    } = this.props
+    let HeaderComponent = components.header || Header
+    var date;
+
+    return staff.map((person, i) => {
+      let drilldownView = getDrilldownView(person)
+
+      // no need for fancy text.
+      let label = person.id;
+
+      const { className, style: dayStyles } =
+        (dayPropGetter && dayPropGetter(person)) || {}
+
+      let header = (
+        <HeaderComponent
+          date={date}
+          label={label}
+          localizer={localizer}
+          format={dayFormat}
+          culture={culture}
+        />
+      )
+
+      return (
+        <div
+          key={i}
+          className={cn(
+            'rbc-header',
+            className,
+            dates.isToday(date) && 'rbc-today'
+          )}
+          style={Object.assign({}, dayStyles, segStyle(1, this.slots))}
+        >
+          {drilldownView ? (
+            <a
+              href="#"
+              onClick={e => this.handleHeaderClick(date, drilldownView, e)}
+            >
+              {header}
+            </a>
+          ) : (
+            <span>{header}</span>
+          )}
+        </div>
+      )
     })
   }
 

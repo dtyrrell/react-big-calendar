@@ -1,9 +1,10 @@
 export default [
   {
     title: 'All Day Event very long title',
-    allDay: true,
-    start: new Date(2015, 3, 0),
-    end: new Date(2015, 3, 1),
+    allDay: false,
+    start: new Date(2018, 0, 11, 12, 30, 0),
+    end: new Date(2018, 0, 11, 13, 0, 0),
+    StaffId: 'Paul'
   },
   {
     title: 'Long Event',
