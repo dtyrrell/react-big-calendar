@@ -9,6 +9,7 @@ const staff = [
   },
   {
     StaffId: "Vic",
+    Id: "Vic"
   }];
 
 let Basic = props => (
@@ -20,7 +21,6 @@ let Basic = props => (
     views={allViews}
     step={60}
     defaultDate={new Date(2018, 0, 11)}
-    defaultView="schedule"
     onSelectEvent={event => alert(event.StaffId)}
     onSelectSlot={slotInfo =>
       alert(

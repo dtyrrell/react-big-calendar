@@ -170,8 +170,6 @@ export default class TimeGrid extends Component {
         let eStart = get(event, startAccessor),
           eEnd = get(event, endAccessor)
 
-          console.log(eStart);
-          console.log(eEnd);
         if (
           get(event, allDayAccessor) ||
           (dates.isJustDate(eStart) && dates.isJustDate(eEnd)) ||
@@ -239,8 +237,10 @@ export default class TimeGrid extends Component {
 
     return staff.map((person, idx) => {
 
+
       // schedule view can only see one date.
       var date = range[0];
+
 
       let daysEvents = events.filter(event =>
         dates.inRange(
@@ -250,11 +250,13 @@ export default class TimeGrid extends Component {
           'day'
         )
       )
+
       return resources.map((resource, id) => {
         let eventsToDisplay = daysEvents.filter(
               event =>
-                event.StaffId ===  person.Id
+                event.StaffId ===  person.StaffId
             )
+
 
         return (
           <DayColumn
@@ -421,8 +423,6 @@ export default class TimeGrid extends Component {
 
     return staff.map((person, i) => {
       let drilldownView = getDrilldownView(person)
-
-      console.log(person);
 
       // no need for fancy text.
       let label = person.StaffId;

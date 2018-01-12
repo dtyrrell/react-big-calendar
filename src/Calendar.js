@@ -720,9 +720,6 @@ class Calendar extends React.Component {
     let CalToolbar = components.toolbar || Toolbar
     const label = View.title(current, { formats, culture, length })
 
-    console.log("TEST");
-    console.log(staff);
-
     return (
       <div
         {...elementProps}
