@@ -9,19 +9,17 @@ import localizer from './localizer'
 class Schedule extends React.Component {
   static propTypes = {
     date: PropTypes.instanceOf(Date).isRequired,
+    staff: PropTypes.arrayOf(PropTypes.object),
   }
 
   render() {
-    let { date, ...props } = this.props
-
+    let { date, staff, ...props } = this.props
+    
     return (
       <TimeGrid
         {...props}
         range={[dates.startOf(date, 'day')]}
-        staff={[
-          { Id: 'Paul' },
-          { Id: 'Johnny' },
-          { Id :'Tom' } ]}
+        staff={staff}
         eventOffset={10}
       />
     )

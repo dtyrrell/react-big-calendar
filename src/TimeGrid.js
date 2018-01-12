@@ -164,8 +164,7 @@ export default class TimeGrid extends Component {
 
     let allDayEvents = [],
       rangeEvents = []
-      console.log("events");
-      console.log(events);
+
     events.forEach(event => {
       if (inRange(event, start, end, this.props)) {
         let eStart = get(event, startAccessor),
@@ -185,7 +184,6 @@ export default class TimeGrid extends Component {
       }
     })
 
-    console.log(rangeEvents);
 
     allDayEvents.sort((a, b) => sortEvents(a, b, this.props))
 
@@ -219,7 +217,7 @@ export default class TimeGrid extends Component {
     )
   }
   renderEvents(range, events, today, resources, staff) {
-    console.log(staff);
+
       if(staff) {
         return this.renderEventsForStaff(range, events, today, resources, staff);
       }
@@ -424,8 +422,10 @@ export default class TimeGrid extends Component {
     return staff.map((person, i) => {
       let drilldownView = getDrilldownView(person)
 
+      console.log(person);
+
       // no need for fancy text.
-      let label = person.Id;
+      let label = person.StaffId;
 
       const { className, style: dayStyles } =
         (dayPropGetter && dayPropGetter(person)) || {}

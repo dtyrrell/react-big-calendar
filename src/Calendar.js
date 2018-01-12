@@ -169,6 +169,9 @@ class Calendar extends React.Component {
      */
     resources: PropTypes.arrayOf(PropTypes.object),
 
+    // todo add this.
+    staff: PropTypes.arrayOf(PropTypes.object),
+
     /**
      * Provides a unique identifier for each resource in the `resources` array
      *
@@ -694,6 +697,7 @@ class Calendar extends React.Component {
       elementProps,
       date: current,
       length,
+      staff,
       ...props
     } = this.props
 
@@ -715,6 +719,9 @@ class Calendar extends React.Component {
 
     let CalToolbar = components.toolbar || Toolbar
     const label = View.title(current, { formats, culture, length })
+
+    console.log("TEST");
+    console.log(staff);
 
     return (
       <div
@@ -753,6 +760,7 @@ class Calendar extends React.Component {
           onDoubleClickEvent={this.handleDoubleClickEvent}
           onSelectSlot={this.handleSelectSlot}
           onShowMore={this._showMore}
+          staff={staff}
         />
       </div>
     )
