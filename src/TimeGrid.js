@@ -425,7 +425,7 @@ export default class TimeGrid extends Component {
       let drilldownView = getDrilldownView(person)
 
       // no need for fancy text.
-      let label = person.id;
+      let label = person.Id;
 
       const { className, style: dayStyles } =
         (dayPropGetter && dayPropGetter(person)) || {}
